@@ -15,28 +15,28 @@ public class HangmanGame {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		Scanner scanner = new Scanner(System.in);
-		System.out.println("Enter your name.");
-		String name = scanner.nextLine();
+    	System.out.println("Въведете своето име.");
+	    String name = scanner.nextLine();
 		boolean areWePlaying = true;
 		while (areWePlaying) {
-			System.out.printf("Welcome to my Hangman game , %s. Let's the game begin.", name);
+			System.out.printf("Здравей,%s , това е играта Бесеница.", name);
+			System.out.println("Играта представлява познаване на думи , които са само градове от България.");
 			System.out.println();
 			System.out.println("___________________________________________");
-			System.out.println("First I will tell you the rules and commands for the game.");
+			System.out.println("Преди да започнем, ще ти разкажа за начина на игра и команди , които можеш да използваш по време на игра.");
 			System.out.println(
-					"After you entered your name and started playing , I will generate a random word that you must guess.");
-			System.out.println("Word that are in this game are only cities form our country, Bulgaria.");
+					"След като си въвел името си , ще избера дума , която ти трябва да познаещ.");
 			System.out.println(
-					"You have 6 wrong tries and once you reach the maximum , you are getting hanged and loose the game!");
+					"Имаш право на 6 грешни опита , преди да бъдеш обесен и да загубиш.");
 			System.out.println(
-					"If you want to quit the game and stop playing , just press \"-\" and the game will stop.");
-			System.out.println("Good luck , have fun!");
+					"Ако искаш да прекратиш играта и да спреш да играеш натисни \"-\" и играта ще спре.");
+			System.out.println("Приятна игра!");
 			System.out.println("___________________________________________");
 
 			char[] randomWordToGuess = chosingWord();
 			int amountOfFalseGuesses = 0;
-			char[] playerGuess = new char[randomWordToGuess.length + amountOfFalseGuesses];
-			playerGuess = fillingCharArray(playerGuess);
+			char[] playerGuess = new char[randomWordToGuess.length];
+			playerGuess = fillingCharArray(playerGuess,chosingWord());
 			boolean wordIsGuessed = false;
 			while (!wordIsGuessed && amountOfFalseGuesses < 6) {
 				char input = gettingLetter(playerGuess);
@@ -65,9 +65,6 @@ public class HangmanGame {
 		}
 	}
 
-
-	///////////////////////////////////////////////////////////////////////////
-
 	public static char[] chosingWord() throws FileNotFoundException {
 		ArrayList<String> cities = new ArrayList<String>();
 
@@ -83,18 +80,23 @@ public class HangmanGame {
 		return randomWordToGuess;
 	}
 
-	public static char[] fillingCharArray(char[] playerGuess) {
-		for (int i = 0; i < playerGuess.length; i++) {
+	public static char[] fillingCharArray(char[] playerGuess, char[] chosingWord) {
+		for (int i = 0; i < chosingWord.length; i++) {
+			if (chosingWord[i]==' '){
+
+				playerGuess[i] = ' ';}
+			else {
 			playerGuess[i] = '_';
+			}
 		}
 		return playerGuess;
 	}
 
 	public static char gettingLetter (char[] playerGuess){ 
 		Scanner scanner= new Scanner(System.in);
-		System.out.print("Current guesses :");
+		System.out.print("Познати букви:");
 		printArray(playerGuess);
-		System.out.println("Enter a letter");
+		System.out.println("Въведи буква");
 		char input = scanner.nextLine().charAt(0);
 		while(checkingInputs(input)==false){
 			System.out.println("Не сте въввели буква , моля въведете отново");
@@ -105,7 +107,7 @@ public class HangmanGame {
 	}
 	public static boolean checkingInputs (char input) {
 		 boolean isItCorrect = true;
-		if (input<'а'||input>'я'&&input!='-'){
+		if (input<'а'||input>'я'&&input!='-'&&input!=' '){
 			isItCorrect=false;
 		}
 		return isItCorrect;
@@ -152,7 +154,7 @@ public class HangmanGame {
 		} else if (amountOfFailTries == 5) {
 			fifthFailTry();
 		} else if (amountOfFailTries == 6) {
-			sixthFailTry(chosingWord().toString());
+			sixthFailTry();
 		}
 	}
 
@@ -163,7 +165,7 @@ public class HangmanGame {
 		System.out.println("|");
 		System.out.println("|");
 		System.out.println("|");
-		System.out.println("You have 4 fail tries left!");
+		System.out.println("Имаш още 5 грешни опита!");
 	}
 
 	public static void secondFailTry() {
@@ -173,7 +175,7 @@ public class HangmanGame {
 		System.out.println("|     |");
 		System.out.println("|");
 		System.out.println("|");
-		System.out.println("You have 3 fail tries left!");
+		System.out.println("Имаш още 4 грешни опита");
 	}
 
 	public static void thirdFailTry() {
@@ -183,7 +185,7 @@ public class HangmanGame {
 		System.out.println("|    \\|");
 		System.out.println("|");
 		System.out.println("|");
-		System.out.println("You have 2 fail tries left!");
+		System.out.println("Имаш още 3 грешни опита");
 	}
 
 	public static void fourthFailTry() {
@@ -193,7 +195,7 @@ public class HangmanGame {
 		System.out.println("|    \\|/");
 		System.out.println("|");
 		System.out.println("|");
-		System.out.println("You have 1 fail tries left!");
+		System.out.println("Имаш още 2 грешни опита");
 	}
 
 	public static void fifthFailTry() {
@@ -203,31 +205,30 @@ public class HangmanGame {
 		System.out.println("|    \\|/");
 		System.out.println("|    /");
 		System.out.println("|");
-		System.out.println("You have 0 fail tries left!One more and you loose.");
+		System.out.println("Имаш още 1 грешен опит");
 	}
 
-	public static void sixthFailTry(String randomGuessingWord) {
+	public static void sixthFailTry() throws FileNotFoundException{
 		System.out.println(" _____");
 		System.out.println("|/    |");
 		System.out.println("|     o");
 		System.out.println("|    \\|/");
 		System.out.println("|    / \\");
 		System.out.println("|");
-		randomGuessingWord = randomGuessingWord.substring(0, 1).toUpperCase()
-				+ randomGuessingWord.substring(1).toLowerCase();
-		System.out.println("You lost.The word was..." + randomGuessingWord);
+		System.out.print("Загуби! Думата е ..." );
+		System.out.println(chosingWord());
 	}
 
 	public static boolean askingForAnotherGame() {
 		boolean areWePlaying= true;
-		System.out.println("Do you want to play another game? (yes/no)");
+		System.out.println("    Нова игра?(да/не)");
 		Scanner scanner = new Scanner(System.in);
 		String anotherGame = scanner.nextLine();
-		if (anotherGame.equals("no")) {
-			System.out.println("Game over.Come back later.");
+		if (anotherGame.equals("не")) {
+			System.out.println("Играта приключи.");
 			areWePlaying = false;
 		}
-		return true;
+		return areWePlaying;
 	}
 
 }
