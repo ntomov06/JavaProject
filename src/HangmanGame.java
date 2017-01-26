@@ -4,39 +4,34 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
 
-//Methods we need 
-// generating a random number
-//1st method for choosing a word
-//2nd method for inputing a players guess
-//3rd comparing the chosen word with with letters that players inputs
-// 4thmethod for drawing a picture of hangedman and counting left tries
-//
 public class HangmanGame {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		Scanner scanner = new Scanner(System.in);
-    	System.out.println("Въведете своето име.");
-	    String name = scanner.nextLine();
+		System.out.println("Въведете своето име.");
+		String name = scanner.nextLine();
 		boolean areWePlaying = true;
+		int timePlaying = 1;
 		while (areWePlaying) {
-			System.out.printf("Здравей,%s , това е играта Бесеница.", name);
-			System.out.println("Играта представлява познаване на думи , които са само градове от България.");
-			System.out.println();
-			System.out.println("___________________________________________");
-			System.out.println("Преди да започнем, ще ти разкажа за начина на игра и команди , които можеш да използваш по време на игра.");
-			System.out.println(
-					"След като си въвел името си , ще избера дума , която ти трябва да познаещ.");
-			System.out.println(
-					"Имаш право на 6 грешни опита , преди да бъдеш обесен и да загубиш.");
-			System.out.println(
-					"Ако искаш да прекратиш играта и да спреш да играеш натисни \"-\" и играта ще спре.");
-			System.out.println("Приятна игра!");
-			System.out.println("___________________________________________");
+			if (timePlaying == 1) {
+				System.out.printf("Здравей, %s, това е играта Бесеница.", name);
+				System.out.println(" Играта представлява познаване на думи, които са само градове от България.");
+				System.out.println();
+				System.out.println("___________________________________________");
+				System.out.println(
+						" Преди да започнем, ще ти разкажа за начина на игра и командите, които можеш да използваш по време на игра.");
+				System.out.println(" След като си въвел името си, ще избера дума, която ти трябва да познаещ.");
+				System.out.println(" Имаш право на 6 грешни опита, преди да бъдеш обесен и да загубиш.");
+				System.out
+						.println(" Ако искаш да прекратиш играта и да спреш да играеш натисни \"-\" и играта ще спре.");
+				System.out.println(" Приятна игра!");
+				System.out.println("___________________________________________");
+			}
 
 			char[] randomWordToGuess = chosingWord();
 			int amountOfFalseGuesses = 0;
 			char[] playerGuess = new char[randomWordToGuess.length];
-			playerGuess = fillingCharArray(playerGuess,chosingWord());
+			playerGuess = fillingCharArray(playerGuess, randomWordToGuess);
 			boolean wordIsGuessed = false;
 			while (!wordIsGuessed && amountOfFalseGuesses < 6) {
 				char input = gettingLetter(playerGuess);
@@ -52,16 +47,21 @@ public class HangmanGame {
 					if (isSearchingWordContainsInput(randomWordToGuess, input) == false) {
 						amountOfFalseGuesses++;
 					}
-					;
-					drawingHangman(amountOfFalseGuesses);
+
+					drawingHangman(amountOfFalseGuesses, randomWordToGuess);
+					if (amountOfFalseGuesses == 6) {
+						System.out.println(randomWordToGuess);
+					}
 					if (isTheWordGuessed(playerGuess)) {
 						wordIsGuessed = true;
-						System.out.println("Congrats, you won!");
+						System.out.println(" Поздравления, ти спечели!");
+						System.out.println(playerGuess);
 						areWePlaying = false;
 					}
 				}
 			}
-			areWePlaying=askingForAnotherGame();
+			areWePlaying = askingForAnotherGame();
+			timePlaying++;
 		}
 	}
 
@@ -82,36 +82,25 @@ public class HangmanGame {
 
 	public static char[] fillingCharArray(char[] playerGuess, char[] chosingWord) {
 		for (int i = 0; i < chosingWord.length; i++) {
-			if (chosingWord[i]==' '){
-
-				playerGuess[i] = ' ';}
-			else {
-			playerGuess[i] = '_';
+			if (chosingWord[i] != ' ') {
+				playerGuess[i] = '_';
+			} else {
+				playerGuess[i] = ' ';
 			}
 		}
 		return playerGuess;
 	}
 
-	public static char gettingLetter (char[] playerGuess){ 
-		Scanner scanner= new Scanner(System.in);
-		System.out.print("Познати букви:");
+	public static char gettingLetter(char[] playerGuess) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.print(" Познати букви:");
 		printArray(playerGuess);
-		System.out.println("Въведи буква");
+		System.out.println(" Въведи буква");
 		char input = scanner.nextLine().charAt(0);
-		while(checkingInputs(input)==false){
-			System.out.println("Не сте въввели буква , моля въведете отново");
-			scanner.nextLine().charAt(0);
-		}
 		return input;
-		
+
 	}
-	public static boolean checkingInputs (char input) {
-		 boolean isItCorrect = true;
-		if (input<'а'||input>'я'&&input!='-'&&input!=' '){
-			isItCorrect=false;
-		}
-		return isItCorrect;
-	}
+
 	public static void printArray(char[] array) {
 		for (int i = 0; i < array.length; i++) {
 			System.out.print(array[i] + " ");
@@ -120,12 +109,13 @@ public class HangmanGame {
 	}
 
 	public static boolean isTheWordGuessed(char[] array) {
+		boolean isTheWordGuessed = true;
 		for (int i = 0; i < array.length; i++) {
 			if (array[i] == '_') {
-				return false;
+				isTheWordGuessed = false;
 			}
 		}
-		return true;
+		return isTheWordGuessed;
 	}
 
 	public static boolean isSearchingWordContainsInput(char[] guesses, char input) {
@@ -142,7 +132,7 @@ public class HangmanGame {
 		return isContains;
 	}
 
-	public static void drawingHangman(int amountOfFailTries) throws FileNotFoundException {
+	public static void drawingHangman(int amountOfFailTries, char[] randomWordToGuess) throws FileNotFoundException {
 		if (amountOfFailTries == 1) {
 			firstFailTry();
 		} else if (amountOfFailTries == 2) {
@@ -165,7 +155,7 @@ public class HangmanGame {
 		System.out.println("|");
 		System.out.println("|");
 		System.out.println("|");
-		System.out.println("Имаш още 5 грешни опита!");
+		System.out.println(" Имаш още 5 грешни опита!");
 	}
 
 	public static void secondFailTry() {
@@ -175,7 +165,7 @@ public class HangmanGame {
 		System.out.println("|     |");
 		System.out.println("|");
 		System.out.println("|");
-		System.out.println("Имаш още 4 грешни опита");
+		System.out.println(" Имаш още 4 грешни опита");
 	}
 
 	public static void thirdFailTry() {
@@ -185,7 +175,7 @@ public class HangmanGame {
 		System.out.println("|    \\|");
 		System.out.println("|");
 		System.out.println("|");
-		System.out.println("Имаш още 3 грешни опита");
+		System.out.println(" Имаш още 3 грешни опита");
 	}
 
 	public static void fourthFailTry() {
@@ -195,7 +185,7 @@ public class HangmanGame {
 		System.out.println("|    \\|/");
 		System.out.println("|");
 		System.out.println("|");
-		System.out.println("Имаш още 2 грешни опита");
+		System.out.println(" Имаш още 2 грешни опита");
 	}
 
 	public static void fifthFailTry() {
@@ -205,30 +195,28 @@ public class HangmanGame {
 		System.out.println("|    \\|/");
 		System.out.println("|    /");
 		System.out.println("|");
-		System.out.println("Имаш още 1 грешен опит");
+		System.out.println(" Имаш още 1 грешен опит");
 	}
 
-	public static void sixthFailTry() throws FileNotFoundException{
+	public static void sixthFailTry() throws FileNotFoundException {
 		System.out.println(" _____");
 		System.out.println("|/    |");
 		System.out.println("|     o");
 		System.out.println("|    \\|/");
 		System.out.println("|    / \\");
 		System.out.println("|");
-		System.out.print("Загуби! Думата е ..." );
-		System.out.println(chosingWord());
+		System.out.print(" Загуби! Думата е ...");
 	}
 
 	public static boolean askingForAnotherGame() {
-		boolean areWePlaying= true;
-		System.out.println("    Нова игра?(да/не)");
+		boolean areWePlaying = true;
+		System.out.println(" Нова игра?(да/не)");
 		Scanner scanner = new Scanner(System.in);
 		String anotherGame = scanner.nextLine();
-		if (anotherGame.equals("не")) {
-			System.out.println("Играта приключи.");
+		if (anotherGame.equals(" не")) {
+			System.out.println(" Играта приключи.");
 			areWePlaying = false;
 		}
 		return areWePlaying;
 	}
-
 }
